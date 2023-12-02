@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -13,7 +13,7 @@ var debug = flag.Bool("debug", false, "Print debug info")
 
 func main() {
 	flag.Parse()
-	bytes, err := ioutil.ReadFile(*inputFile)
+	bytes, err := os.ReadFile(*inputFile)
 	if err != nil {
 		return
 	}
@@ -22,12 +22,18 @@ func main() {
 
 	// part 1
 	possible_games := 0
-	max_balls := map[string]int{
+	max_cubes := map[string]int{
 		"red":   12,
 		"green": 13,
 		"blue":  14,
 	}
+	set_cube_power := 0
 	for _, line := range lines {
+		min_cubes := map[string]int{
+			"red":   1,
+			"green": 1,
+			"blue":  1,
+		}
 		if len(line) < 1 {
 			break
 		}
@@ -40,19 +46,20 @@ func main() {
 			for _, ball := range draw {
 				b := strings.Split(ball, " ")
 				count, _ := strconv.Atoi(b[1])
-				if count > max_balls[b[2]] {
-					fmt.Printf("Game %d is not possible because there are too many %s balls: %d\n", id, b[2], count)
-					possible_game = false
-					break
+				if count > min_cubes[b[2]] {
+					min_cubes[b[2]] = count
 				}
-			}
-			if !possible_game {
-				break
+				if count > max_cubes[b[2]] {
+					fmt.Printf("Game %d is not possible because there are too many %s cubes: %d\n", id, b[2], count)
+					possible_game = false
+				}
 			}
 		}
 		if possible_game {
 			possible_games += id
 		}
+		set_cube_power += min_cubes["red"] * min_cubes["green"] * min_cubes["blue"]
 	}
 	fmt.Printf("The possible games are %d\n", possible_games)
+	fmt.Printf("The set cube power is %d\n", set_cube_power)
 }
