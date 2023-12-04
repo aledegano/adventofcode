@@ -24,6 +24,8 @@ func main() {
 	lines := strings.Split(contents, "\n")
 	//part1
 	stack_value := 0
+	cards_score := []int{}
+	cards_copies := []int{}
 	re := regexp.MustCompile(`\d{1,2}`)
 	for _, line := range lines {
 		if len(line) < 1 {
@@ -45,8 +47,26 @@ func main() {
 		}
 		if winning_numbers >= 0 {
 			card_value = int(math.Pow(2, float64(winning_numbers)))
+			cards_score = append(cards_score, winning_numbers + 1)
+		} else {
+			cards_score = append(cards_score, 0)
 		}
+		cards_copies = append(cards_copies, 1)
 		stack_value += int(card_value)
 	}
-	fmt.Printf("The value of the stack is: %d\n", stack_value)
+	fmt.Printf("[Part 1] The value of the stack is: %d\n", stack_value)
+	//part2
+	for id := 0; id < len(cards_score); id++ {
+		if cards_score[id] == 0 {
+			continue
+		}
+		for i := id+1; i <= id + cards_score[id]; i++ { // create n copies of the next score cards
+			cards_copies[i] += cards_copies[id]
+		}
+	}
+	total_copies := 0
+	for id := 0; id < len(cards_copies); id++ {
+		total_copies += cards_copies[id]
+	}
+	fmt.Printf("[Part 2] Total copies: %d\n", total_copies)
 }
