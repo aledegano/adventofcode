@@ -82,9 +82,9 @@ func main() {
 			lastDigit = spellOut[found[len(found)-1]]
 		}
 		if *debug {
-			fmt.Printf("[DEBUG] line: %s, firstDigit: %d, lastDigit: %d, calibration: %d\n",line, firstDigit, lastDigit, firstDigit*10 + lastDigit)
+			fmt.Printf("[DEBUG] line: %s, firstDigit: %d, lastDigit: %d, calibration: %d\n", line, firstDigit, lastDigit, firstDigit*10+lastDigit)
 		}
-		fmt.Printf("%d: %d\n", i, firstDigit*10 + lastDigit)
+		fmt.Printf("%d: %d\n", i, firstDigit*10+lastDigit)
 		calibration += firstDigit*10 + lastDigit
 	}
 	fmt.Printf("The calibration is %d\n", calibration)

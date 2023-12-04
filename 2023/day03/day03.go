@@ -17,17 +17,17 @@ type Bounds struct {
 }
 
 func isPart(lines []string, posX int, posY int, b Bounds) (bool, int) {
-	for i:=posX-1; i<=posX+1; i++ {
+	for i := posX - 1; i <= posX+1; i++ {
 		if i < b.minX || i > b.maxX {
 			continue
 		}
-		for j:=posY-1; j<=posY+1; j++ {
+		for j := posY - 1; j <= posY+1; j++ {
 			if j < b.minY || j > b.maxY || (i == posX && j == posY) {
 				continue
 			}
-			if ! unicode.IsDigit(rune(lines[i][j])) && lines[i][j] != '.' {
+			if !unicode.IsDigit(rune(lines[i][j])) && lines[i][j] != '.' {
 				if lines[i][j] == '*' {
-					return true, i*1000+j // This part `could` be part of a gear
+					return true, i*1000 + j // This part `could` be part of a gear
 				} else {
 					return true, -1 // This part is not part of a gear
 				}
@@ -45,7 +45,7 @@ func main() {
 	}
 	contents := string(bytes)
 	lines := strings.Split(contents, "\n")
-	bounds := Bounds{0, len(lines)-2, 0, len(lines[0])-1} // The x boundaries needs to also remove the last empty line
+	bounds := Bounds{0, len(lines) - 2, 0, len(lines[0]) - 1} // The x boundaries needs to also remove the last empty line
 	buffer := []string{}
 	save := false
 	var partNumber, gear, partsSum int
@@ -59,7 +59,7 @@ func main() {
 			if unicode.IsDigit(r) {
 				buffer = append(buffer, string(r))
 				// Check if there is a special character above, below, left, right or diagonal from this digit
-				if ! save {
+				if !save {
 					save, gear = isPart(lines, x, y, bounds)
 				}
 			} else {
@@ -69,7 +69,7 @@ func main() {
 					save = false
 					fmt.Printf("Part number %d saved.\n", partNumber)
 					if gear >= 0 {
-						gearCandidates[gear] = append(gearCandidates[gear],partNumber)
+						gearCandidates[gear] = append(gearCandidates[gear], partNumber)
 						fmt.Printf("Gear candidate %d saved.\n", gear)
 					}
 				}

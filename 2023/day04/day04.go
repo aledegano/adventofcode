@@ -6,9 +6,7 @@ import (
 	"math"
 	"os"
 	"regexp"
-	// "strconv"
 	"strings"
-	// "unicode"
 )
 
 var inputFile = flag.String("inputFile", "test_input.txt", "Relative file path to use as input.")
@@ -47,7 +45,7 @@ func main() {
 		}
 		if winning_numbers >= 0 {
 			card_value = int(math.Pow(2, float64(winning_numbers)))
-			cards_score = append(cards_score, winning_numbers + 1)
+			cards_score = append(cards_score, winning_numbers+1)
 		} else {
 			cards_score = append(cards_score, 0)
 		}
@@ -60,7 +58,7 @@ func main() {
 		if cards_score[id] == 0 {
 			continue
 		}
-		for i := id+1; i <= id + cards_score[id]; i++ { // create n copies of the next score cards
+		for i := id + 1; i <= id+cards_score[id]; i++ { // create n copies of the next score cards
 			cards_copies[i] += cards_copies[id]
 		}
 	}
