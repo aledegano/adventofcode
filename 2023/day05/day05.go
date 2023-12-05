@@ -104,9 +104,26 @@ func main() {
 	}
 	fmt.Printf("the seeds ranges are %v\n", rangeSeeds)
 	// reverse the steps and for each location compute which seed would map to it
-	fmt.Printf("the locations are %v\n", locations)
+	// fmt.Printf("the locations are %v\n", locations)
+	seeds = []int{}
 	for _, location := range locations {
-		seed := WalkStepsReverse(steps, location)
-		fmt.Printf("location %d would map to seed %d\n", location, seed)
+		seeds = append(seeds, WalkStepsReverse(steps, location))
 	}
+	fmt.Printf("the seeds are %v\n", seeds)
+	// now we have the seeds, we can check which one is really in the ranges of the input seeds
+	realSeeds := []int{}
+	for _, seed := range seeds {
+		// fmt.Printf("checking seed %d\n", seed)
+		for _, r := range rangeSeeds {
+			// fmt.Printf("checking range %v\n", r)
+			if seed >= r[0] && seed <= r[1] {
+				realSeeds = append(realSeeds, seed)
+				// fmt.Printf("[Part 2] The seed %d is in the range %v\n", seed, r)
+				break
+			}
+		}
+	}
+	fmt.Printf("[Part 2] The real seeds are %v\n", realSeeds)
+	nearerLocation = WalkSteps(steps, realSeeds)
+	fmt.Printf("[Part 2] The nearer location of the seeds is %v\n", nearerLocation)
 }
