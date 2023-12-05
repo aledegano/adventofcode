@@ -37,6 +37,18 @@ func WalkSteps(steps [][]transform, seeds []int) int {
 	return nearerLocation
 }
 
+func WalkStepsReverse(steps [][]transform, location int) int {
+	for s := len(steps)-1; s >= 0; s-- {
+		for _, t := range steps[s] {
+			if location >= t.dest && location <= t.dest + t.rng -1 {
+				location += t.source - t.dest
+				break
+			}
+		}
+	}
+	return location // this is the seed
+}
+
 func main() {
 	flag.Parse()
 	bytes, err := os.ReadFile(*inputFile)
@@ -93,4 +105,8 @@ func main() {
 	fmt.Printf("the seeds ranges are %v\n", rangeSeeds)
 	// reverse the steps and for each location compute which seed would map to it
 	fmt.Printf("the locations are %v\n", locations)
+	for _, location := range locations {
+		seed := WalkStepsReverse(steps, location)
+		fmt.Printf("location %d would map to seed %d\n", location, seed)
+	}
 }
