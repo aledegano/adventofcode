@@ -14,9 +14,9 @@ var inputFile = flag.String("inputFile", "test_input.txt", "Relative file path t
 var debug = flag.Bool("debug", false, "Print debug info")
 
 type transform struct {
-	minSource int
-	maxSource int
-	transform int
+	source int
+	dest int
+	rng int
 }
 
 func WalkSteps(steps [][]transform, seeds []int) int {
@@ -24,8 +24,8 @@ func WalkSteps(steps [][]transform, seeds []int) int {
 	for i, seed := range seeds {
 		for _, step := range steps {
 			for _, t := range step {
-				if seed >= t.minSource && seed <= t.maxSource {
-					seed += t.transform
+				if seed >= t.source && seed <= t.source + t.rng -1 {
+					seed += t.dest - t.source
 					break
 				}
 			}
@@ -75,7 +75,8 @@ func main() {
 		dest, _ := strconv.Atoi(tStr[0])
 		source, _ := strconv.Atoi(tStr[1])
 		rng, _ := strconv.Atoi(tStr[2])
-		stepTransforms = append(stepTransforms, transform{source, source + rng -1, dest-source})
+		// stepTransforms = append(stepTransforms, transform{source, source + rng -1, dest-source})
+		stepTransforms = append(stepTransforms, transform{source, dest, rng})
 		if recordLocations {
 			locations = append(locations, dest)
 		}
