@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	// "regexp"
+	"regexp"
 	"strings"
 	// "unicode"
 )
