@@ -44,6 +44,7 @@ func main() {
 		firstValues := []int{}
 		dance:
 			for {
+				fmt.Println(thisDeriv)
 				allZero := true
 				firstValues = append(firstValues, thisDeriv[0])
 				nextDeriv := make([]int, len(thisDeriv)-1)
@@ -61,10 +62,11 @@ func main() {
 				thisDeriv = nextDeriv
 			}
 			newFirstValue := 0
-			for i:= len(firstValues)-2; i >= 0; i-- {
-				newFirstValue = firstValues[i] - firstValues[i+1]
+			for i:= len(firstValues)-1; i >= 0; i-- {
+				newFirstValue = firstValues[i] - newFirstValue
+				fmt.Printf("%d", newFirstValue)
 			}
-			fmt.Println("First value:", newFirstValue)
+			fmt.Println("")
 			prevValues += newFirstValue
 	}
 	fmt.Println("[Part 1] Sum of all next values:", nextValues)
