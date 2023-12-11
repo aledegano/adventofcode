@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"math"
 	"os"
 	"strings"
-	// "unicode"
 )
 
 var inputFile = flag.String("inputFile", "test_input.txt", "Relative file path to use as input.")
@@ -45,21 +45,27 @@ func main() {
 			}
 		}
 	}
-	fmt.Println(initialPhoto)
-	fmt.Println(emptyRows)
-	fmt.Println(emptyCols)
 	for i, coord := range initialPhoto {
+		deltaX := 0
+		deltaY := 0
 		for row, empty := range emptyRows {
 			if empty && coord.x > row {
-				coord.x++
+				deltaX++
 			}
 		}
 		for col, empty := range emptyCols {
 			if empty && coord.y > col {
-				coord.y++
+				deltaY++
 			}
 		}
-		initialPhoto[i] = coord
+		initialPhoto[i] = Coord{coord.x + deltaX, coord.y + deltaY}
 	}
-	fmt.Println(initialPhoto)
+	// evaluate distances the brute way
+	part1Result := 0
+	for i, coord := range initialPhoto {
+		for j:=i+1; j<len(initialPhoto); j++ {
+			part1Result += int(math.Abs(float64((initialPhoto[j].x - coord.x)))) + int(math.Abs(float64(coord.y - initialPhoto[j].y)))
+		}
+	}
+	fmt.Printf("[Part 1] Sum of the shortest distance: %d\n", part1Result)
 }
