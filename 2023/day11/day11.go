@@ -26,11 +26,11 @@ func main() {
 	lines := strings.Split(contents, "\n")
 	initialPhoto := []Coord{}
 	emptyRows := make(map[int]bool, len(lines[0]))
-	for i := range emptyRows {
+	for i := 0; i<len(lines[0]); i++ {
 		emptyRows[i] = true
 	}
 	emptyCols := make(map[int]bool, len(lines)-1)
-	for i := range emptyCols {
+	for i := 0; i<len(lines)-1; i++ {
 		emptyCols[i] = true
 	}
 	for i, line := range lines {
@@ -40,10 +40,26 @@ func main() {
 		for j, char := range line {
 			if char == '#' {
 				initialPhoto = append(initialPhoto, Coord{i, j})
-				delete(emptyCols, j)
-				delete(emptyRows, i)
+				emptyCols[j] = false
+				emptyRows[i] = false
 			}
 		}
 	}
-	fmt.Println(initialPhoto, emptyRows, emptyCols)
+	fmt.Println(initialPhoto)
+	fmt.Println(emptyRows)
+	fmt.Println(emptyCols)
+	for i, coord := range initialPhoto {
+		for row, empty := range emptyRows {
+			if empty && coord.x > row {
+				coord.x++
+			}
+		}
+		for col, empty := range emptyCols {
+			if empty && coord.y > col {
+				coord.y++
+			}
+		}
+		initialPhoto[i] = coord
+	}
+	fmt.Println(initialPhoto)
 }
