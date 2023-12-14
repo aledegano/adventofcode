@@ -16,6 +16,7 @@ func main() {
 	flag.Parse()
 	bytes, err := os.ReadFile(*inputFile)
 	if err != nil {
+		fmt.Printf("Error reading file %s: %v\n", *inputFile, err)
 		return
 	}
 	contents := string(bytes)

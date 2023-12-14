@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	// "unicode"
@@ -16,6 +17,7 @@ func main() {
 	flag.Parse()
 	bytes, err := os.ReadFile(*inputFile)
 	if err != nil {
+		fmt.Printf("Error reading file %s: %v\n", *inputFile, err)
 		return
 	}
 	contents := string(bytes)
@@ -33,4 +35,14 @@ func main() {
 		}
 	}
 	fmt.Printf("The springs are %v and errors: %v\n", springs, errors)
+	re := regexp.MustCompile(`\#*\?*`)
+	// part 1
+	for i, spring := range springs {
+		// start by removing unanbiguous groups of damaged springs
+		groups := re.FindAllString(spring, -1)
+		fmt.Printf("Groups: %v errors: %v\n", groups, errors[i])
+		for _, group := range groups {
+			fmt.Printf("Group: %s\n", group)
+		}
+	}
 }
