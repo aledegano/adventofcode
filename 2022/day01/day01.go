@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	// "regexp"
+	"sort"
 	"strings"
 	"strconv"
 	// "unicode"
@@ -24,7 +25,6 @@ func main() {
 	lines := strings.Split(contents, "\n")
 	var calories []int
 	currentCalories := 0
-	maxCalories := 0
 	for _, line := range lines {
 		if line == "" {
 			calories = append(calories, currentCalories)
@@ -33,10 +33,10 @@ func main() {
 		}
 		cal, _ := strconv.Atoi(line)
 		currentCalories = currentCalories + cal
-		if currentCalories > maxCalories {
-			maxCalories = currentCalories
-		}
 	}
-	fmt.Println(calories)
-	fmt.Println("max calories: ", maxCalories)
+	// Sort in descending order
+	sort.Sort(sort.Reverse(sort.IntSlice(calories)))
+
+	fmt.Println("Part 1: ", calories[0])
+	fmt.Println("Part 2: ", calories[0]+calories[1]+calories[2])
 }
