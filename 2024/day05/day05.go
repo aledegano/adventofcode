@@ -56,6 +56,7 @@ func main() {
 		}
 	}
 	middlePageSum := 0
+	incorrectUpdates := [][]int{}
 	for _, update := range pageUpdates {
 		updateRespectsOrder := true
 		out:
@@ -63,6 +64,7 @@ func main() {
 			for j:=i+1; j<len(update); j++ {
 				if !isOrderRespected(orderRules, page, update[j]) {
 					updateRespectsOrder = false
+					incorrectUpdates = append(incorrectUpdates, update)
 					break out
 				}
 			}
@@ -72,4 +74,19 @@ func main() {
 		}
 	}
 	fmt.Printf("Part 1: %d\n", middlePageSum)
+	//Part2, fix the incorrect updates
+	middlePageSum = 0
+	for _, incorrectUpdate := range incorrectUpdates {
+		fixThisUpdate:
+		for i, page := range incorrectUpdate {
+			for j:=i+1; j<len(incorrectUpdate); j++ {
+				if !isOrderRespected(orderRules, page, incorrectUpdate[j]) {
+					incorrectUpdate[i], incorrectUpdate[j] = incorrectUpdate[j], incorrectUpdate[i]
+					goto fixThisUpdate
+				}
+			}
+		}
+		middlePageSum += incorrectUpdate[int(math.Floor(float64(len(incorrectUpdate))/2))]
+	}
+	fmt.Printf("Part 2: %d\n", middlePageSum)
 }
