@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	// "math"
+	"math"
 	"os"
 	// "regexp"
 	"strconv"
@@ -13,6 +13,15 @@ import (
 
 var inputFile = flag.String("inputFile", "test_input.txt", "Relative file path to use as input.")
 var debug = flag.Bool("debug", false, "Print debug info")
+
+func isOrderRespected(orderRules map[int][]int, currentPage int, nextPage int) bool {
+	for _, next := range orderRules[currentPage] {
+		if next == nextPage {
+			return true
+		}
+	}
+	return false
+}
 
 func main() {
 	flag.Parse()
@@ -46,6 +55,21 @@ func main() {
 			pageUpdates = append(pageUpdates, pageUpdate)
 		}
 	}
-	fmt.Println(orderRules)
-	fmt.Println(pageUpdates)
+	middlePageSum := 0
+	for _, update := range pageUpdates {
+		updateRespectsOrder := true
+		out:
+		for i, page := range update {
+			for j:=i+1; j<len(update); j++ {
+				if !isOrderRespected(orderRules, page, update[j]) {
+					updateRespectsOrder = false
+					break out
+				}
+			}
+		}
+		if updateRespectsOrder {
+			middlePageSum += update[int(math.Floor(float64(len(update))/2))]
+		}
+	}
+	fmt.Printf("Part 1: %d\n", middlePageSum)
 }
