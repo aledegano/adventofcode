@@ -43,11 +43,11 @@ func walkTheGuard(initialPosition Position, initialDirection string, labMap [][]
 	path := make(map[Position]string)
 	currentPosition := initialPosition
 	currentDirection := initialDirection
-	path[currentPosition] = currentDirection
 	for {
 		nextPosition := moveGuard(currentPosition, currentDirection)
 		// if the guard exited the map break the loop
 		if outsideMap(nextPosition, labMap) {
+			path[currentPosition] = currentDirection
 			return path, false
 		}
 		// if there is an obstacle in the next position, rotate 90 degrees to the right
@@ -55,6 +55,8 @@ func walkTheGuard(initialPosition Position, initialDirection string, labMap [][]
 			currentDirection = rotateMove[currentDirection]
 			nextPosition = moveGuard(currentPosition, currentDirection)
 		}
+		path[currentPosition] = currentDirection
+		// fmt.Printf("Position: %v, Direction: %s\n", currentPosition, currentDirection)
 		// if the guard is in a loop, return.
 		// the guard is in a loop if the next position is already visited and the direction is the same as the first time
 		if _, ok := path[nextPosition]; ok {
@@ -63,7 +65,6 @@ func walkTheGuard(initialPosition Position, initialDirection string, labMap [][]
 			}
 		}
 		currentPosition = nextPosition
-		path[nextPosition] = currentDirection
 	}
 }
 
@@ -100,24 +101,26 @@ func main() {
 
 	// part 2, check if a legal rotation would place the guard in a position already visited with the same initialDirection it had the first time
 	obstructionPositions := make(map[Position]bool)
-	for initialPosition, initialDirection := range path {
+	for currentPosition, currentDirection := range path {
 		obstructedLabMap := make([][]string, len(labMap))
 		copy(obstructedLabMap, labMap)
-		obstruction := moveGuard(initialPosition,initialDirection) // put an obstruction where the guard would be next
+		obstruction := moveGuard(currentPosition,currentDirection) // put an obstruction where the guard would be next
 		if outsideMap(obstruction, labMap) {
 			continue
 		}
-		// check that the proposed obstruction is not already an obstruction
-		if labMap[obstruction.y][obstruction.x] == "#" {
+		if _, ok := obstructionPositions[obstruction]; ok {
+			continue
+		}
+		if obstruction == initialPosition { // as per instructions the obstruction cannot be placed at the guard initial position
 			continue
 		}
 		obstructedLabMap[obstruction.y][obstruction.x] = "#"
 		// walk the guard and save the unique visited positions
-		_, loop := walkTheGuard(initialPosition, initialDirection, obstructedLabMap)
+		_, loop := walkTheGuard(currentPosition, currentDirection, obstructedLabMap)
 		if loop {
 			obstructionPositions[obstruction] = true
 		}
-		// remove the obstruction because apparently I am unable to make a deep copy of the original labMap
+		// remove the obstruction because it is faster to type than to deep-copy every slice of slices of labMap
 		obstructedLabMap[obstruction.y][obstruction.x] = "."
 	}
 	fmt.Printf("Part 2. The number of obstructions creating a loop is %d\n", len(obstructionPositions))
