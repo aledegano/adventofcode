@@ -3,13 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	// "math"
 	"os"
-	// "regexp"
-	// "strconv"
 	"strings"
-	// "time"
-	// "unicode"
 )
 
 var inputFile = flag.String("inputFile", "test_input.txt", "Relative file path to use as input.")
@@ -55,8 +50,6 @@ func main() {
 			}
 		}
 	}
-	//fmt.Println("Lab map: ", labMap)
-	//fmt.Printf("Guard position and direction: %d, %d, %s\n", guardPosition.x, guardPosition.y, labMap[guardPosition.y][guardPosition.x])
 	newGuardPosition := guardPosition
 	for {
 		newGuardPosition = Position{
@@ -64,13 +57,10 @@ func main() {
 			guardPosition.y + move[labMap[guardPosition.y][guardPosition.x]].y,
 		}
 		newMove := labMap[guardPosition.y][guardPosition.x]
-		//fmt.Println("Boundary check: ", newGuardPosition.x, newGuardPosition.y, len(labMap[0]), len(labMap))
+		// if the guard exited the map break the loop
 		if newGuardPosition.x < 0 || newGuardPosition.x >= len(labMap[0]) || newGuardPosition.y < 0 || newGuardPosition.y >= len(labMap) {
-			//fmt.Println("Guard exited the map")
 			break
 		}
-		//fmt.Printf("Tentative new guard position, and direction: %d, %d, %s\n", newGuardPosition.x, newGuardPosition.y, labMap[newGuardPosition.y][newGuardPosition.x])
-		//time.Sleep(1 * time.Second)
 		if labMap[newGuardPosition.y][newGuardPosition.x] == "#" { // Rotate 90 degrees to the right
 			newMove = rotateMove[labMap[guardPosition.y][guardPosition.x]]
 			newGuardPosition = Position{
@@ -80,12 +70,7 @@ func main() {
 		}
 		labMap[guardPosition.y][guardPosition.x] = "."
 		labMap[newGuardPosition.y][newGuardPosition.x] = newMove
-		//fmt.Printf("Confirmed new guard position, and direction: %d, %d, %s\n", newGuardPosition.x, newGuardPosition.y, labMap[newGuardPosition.y][newGuardPosition.x])
-		//time.Sleep(1 * time.Second)
-		// if the guard exited the map break the loop
 		guardPosition = newGuardPosition
-		//fmt.Printf("Set guard position and direction: %d, %d, %s\n", guardPosition.x, guardPosition.y, labMap[guardPosition.y][guardPosition.x])
-		//time.Sleep(1 * time.Second)
 		uniqueVisitedPositions[newGuardPosition] = true
 	}
 	fmt.Printf("The number of unique visited positions is %d\n", len(uniqueVisitedPositions))
