@@ -112,10 +112,11 @@ func main() {
 
 	// part 2, check if a legal rotation would place the guard in a position already visited with the same initialDirection it had the first time
 	obstructionPositions := make(map[Position]bool)
-	for currentPosition, currentDirection := range path {
+	for currentPosition := range path {
 		obstructedLabMap := make([][]string, len(labMap))
 		copy(obstructedLabMap, labMap)
-		obstruction := moveGuard(currentPosition,currentDirection) // put an obstruction where the guard would be next
+		// obstruction := moveGuard(currentPosition,currentDirection) // put an obstruction where the guard would be next
+		obstruction := currentPosition
 		if outsideMap(obstruction, labMap) {
 			continue
 		}
@@ -127,7 +128,7 @@ func main() {
 		}
 		obstructedLabMap[obstruction.y][obstruction.x] = "#"
 		// walk the guard and save the unique visited positions
-		_, loop := walkTheGuard(currentPosition, currentDirection, obstructedLabMap)
+		_, loop := walkTheGuard(initialPosition, initialDirection, obstructedLabMap)
 		if loop {
 			obstructionPositions[obstruction] = true
 		}
