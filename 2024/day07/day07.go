@@ -17,9 +17,6 @@ var debug = flag.Bool("debug", false, "Print debug info")
 
 func checkPermutations(result int, factors []int) bool {
 	permutations, _ := iterium.Product([]bool{true, false}, len(factors)-1).Slice()
-	// fmt.Printf("%d operators, %d permutations.\n", len(factors)-1, len(permutations))
-	// fmt.Printf("%d: %v\n", result, factors)
-	// fmt.Printf("Permutations: %v\n", permutations)
 	for _, perm := range permutations {
 		perResult := factors[0]
 		for i, p := range perm {
@@ -30,7 +27,28 @@ func checkPermutations(result int, factors []int) bool {
 			}
 		}
 		if perResult == result {
-			// fmt.Printf("Found a match: %v\n", perm)
+			return true
+		}
+	}
+	return false
+}
+
+func checkPermutationsPt2(result int, factors []int) bool {
+	permutations, _ := iterium.Product([]string{"+","*","||"}, len(factors)-1).Slice()
+	for _, perm := range permutations {
+		perResult := factors[0]
+		for i, p := range perm {
+			if p == "+" {
+				perResult += factors[i+1]
+			} else if p == "*" {
+				perResult *= factors[i+1]
+			} else {
+				tmp := perResult
+				strConcat := strconv.Itoa(tmp) + strconv.Itoa(factors[i+1])
+				perResult, _ = strconv.Atoi(strConcat)
+			}
+		}
+		if perResult == result {
 			return true
 		}
 	}
@@ -72,12 +90,10 @@ func main() {
 			min +=  calibration[i]
 		}
 		if min == calibration[0] {
-			// fmt.Printf("Found a match: %v\n", calibration)
 			goodCalibrations += calibration[0]
 			continue
 		}
 		if min > calibration[0] {
-			fmt.Printf("Reject %v with min: %d\n", calibration, min)
 			rejectedCalibrations++
 			continue
 		}
@@ -92,22 +108,26 @@ func main() {
 		}
 		if max == calibration[0] {
 			goodCalibrations += calibration[0]
-			// fmt.Printf("Found a match: %v\n", calibration)
 			continue
 		}
 		if max < calibration[0] {
-			fmt.Printf("Reject %v with max: %d\n", calibration, max)
 			rejectedCalibrations++
 			continue
 		}
 		if checkPermutations(calibration[0], calibration[1:]){
 			goodCalibrations += calibration[0]
 			continue
-			// fmt.Printf("Found a match: %v\n", calibration)
 		}
 		rejectedCalibrations++
-		fmt.Printf("Reject %v with no permutation working, min:%d, max:%d.\n", calibration, min, max)
 	}
-	fmt.Printf("Good calibrations: %v\n", goodCalibrations)
-	fmt.Printf("Rejected calibrations: %v\n", rejectedCalibrations)
+	fmt.Printf("Part 1. Good calibrations: %v\n", goodCalibrations)
+	// part 2
+	goodCalibrations = 0
+	for _, calibration := range calibrations {
+		if checkPermutationsPt2(calibration[0], calibration[1:]){
+			goodCalibrations += calibration[0]
+			continue
+		}
+	}
+	fmt.Printf("Part 2. Good calibrations: %v\n", goodCalibrations)
 }
