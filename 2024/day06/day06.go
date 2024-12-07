@@ -36,26 +36,34 @@ func moveGuard(currentPosition Position, direction string) Position {
 }
 
 func outsideMap(position Position, labMap [][]string) bool {
-	return position.x < 0 || position.x >= len(labMap[0]) || position.y < 0 || position.y >= len(labMap)
+	return position.x < 0 || position.x >= len(labMap) || position.y < 0 || position.y >= len(labMap)
 }
 
 func walkTheGuard(initialPosition Position, initialDirection string, labMap [][]string) (map[Position]string, bool) {
 	path := make(map[Position]string)
+	cornerVisited := make(map[Position]int)
 	currentPosition := initialPosition
 	currentDirection := initialDirection
 	for {
 		nextPosition := moveGuard(currentPosition, currentDirection)
 		// if the guard exited the map break the loop
 		if outsideMap(nextPosition, labMap) {
-			path[currentPosition] = currentDirection
+			path[currentPosition] =  currentDirection
 			return path, false
 		}
 		// if there is an obstacle in the next position, rotate 90 degrees to the right
 		if labMap[nextPosition.y][nextPosition.x] == "#" { // Rotate 90 degrees to the right
 			currentDirection = rotateMove[currentDirection]
+			tentativePosition := moveGuard(currentPosition, currentDirection)
+			// for part 2 we need to check again if there is an obstacle in the new next position
+			// checking a second time is enough as it is impossible to have 3 or more obstacles around a position
+			if labMap[tentativePosition.y][tentativePosition.x] == "#" {
+				currentDirection = rotateMove[currentDirection]
+				cornerVisited[currentPosition]++
+			}
 			nextPosition = moveGuard(currentPosition, currentDirection)
 		}
-		path[currentPosition] = currentDirection
+		path[currentPosition] =  currentDirection
 		// fmt.Printf("Position: %v, Direction: %s\n", currentPosition, currentDirection)
 		// if the guard is in a loop, return.
 		// the guard is in a loop if the next position is already visited and the direction is the same as the first time
@@ -63,6 +71,9 @@ func walkTheGuard(initialPosition Position, initialDirection string, labMap [][]
 			if path[nextPosition] == currentDirection {
 				return path, true
 			}
+		}
+		if cornerVisited[currentPosition] > 1 {
+			return path, true
 		}
 		currentPosition = nextPosition
 	}
