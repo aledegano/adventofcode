@@ -1,3 +1,4 @@
 *.input
 pkg
 *.txt
+generate_input.*
