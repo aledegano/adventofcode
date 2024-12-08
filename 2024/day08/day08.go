@@ -14,6 +14,23 @@ import (
 var inputFile = flag.String("inputFile", "test_input.txt", "Relative file path to use as input.")
 var debug = flag.Bool("debug", false, "Print debug info")
 
+type Position struct {
+	x, y int
+}
+
+func outsideMap(position Position, mapSize Position) bool {
+	return position.x < 0 || position.x >= mapSize.x || position.y < 0 || position.y >= mapSize.y
+}
+
+func printMap(m [][]string) {
+	for _, row := range m {
+		for _, cell := range row {
+			fmt.Printf(cell)
+		}
+		fmt.Println()
+	}
+}
+
 func main() {
 	flag.Parse()
 	bytes, err := os.ReadFile(*inputFile)
@@ -24,8 +41,10 @@ func main() {
 	contents := string(bytes)
 	lines := strings.Split(contents, "\n")
 	re := regexp.MustCompile(`\w`)
-	antennas := make(map[string][][]int)
-	mapSize := []int{len(lines[0]), len(lines)-1}
+	antennas := make(map[string][]Position)
+	mapSize := Position{len(lines[0]), len(lines)-1}
+	// for visualization purposes only
+	mapVis := make([][]string, len(lines)-1)
 	for y, line := range lines {
 		if line == "" {
 			continue
@@ -33,11 +52,14 @@ func main() {
 		idx := re.FindAllStringSubmatchIndex(line, -1)
 		for _, match := range idx {
 			frequency := string(line[match[0]])
-			antennas[frequency] = append(antennas[frequency], []int{match[0], y})
+			antennas[frequency] = append(antennas[frequency], Position{match[0], y})
+		}
+		for _, c := range line {
+			mapVis[y] = append(mapVis[y], string(c))
 		}
 	}
-	fmt.Println(antennas)
-	nodes := [][]int{}
+	// Part 1
+	nodes := map[Position]bool{}
 	for _, positions := range antennas {
 		visited := map[int]bool{}
 		for i := range positions {
@@ -46,17 +68,22 @@ func main() {
 				if visited[j] {
 					continue
 				}
-				node1 := []int{positions[i][0]-positions[j][0], positions[i][1]-positions[j][1]}
-				if node1[0] >= 0 && node1[1] >= 0 && node1[0] < mapSize[0] && node1[1] < mapSize[1] {
-					nodes = append(nodes, node1)
+				distance := Position{
+					positions[i].x-positions[j].x,
+					positions[i].y-positions[j].y,
 				}
-				node2 := []int{positions[j][0]-positions[i][0], positions[j][1]-positions[i][1]}
-				if node2[0] >= 0 && node2[1] >= 0 && node2[0] < mapSize[0] && node2[1] < mapSize[1] {
-					nodes = append(nodes, node2)
+				node1 := Position{positions[i].x+distance.x, positions[i].y+distance.y}
+				if ! outsideMap(node1, mapSize) {
+					nodes[node1] = true
+					mapVis[node1.y][node1.x] = "#"
 				}
-				fmt.Println(node1, node2)
+				node2 := Position{positions[j].x-distance.x, positions[j].y-distance.y}
+				if ! outsideMap(node2, mapSize) {
+					nodes[node2] = true
+					mapVis[node2.y][node2.x] = "#"
+				}
 			}
 		}
 	}
-	fmt.Println("Nodes: ", nodes)
+	fmt.Printf("Part 1, found %d antinodes.\n", len(nodes))
 }
