@@ -60,6 +60,7 @@ func main() {
 	}
 	// Part 1
 	nodes := map[Position]bool{}
+	nodesPt2 := map[Position]bool{}
 	for _, positions := range antennas {
 		visited := map[int]bool{}
 		for i := range positions {
@@ -73,17 +74,38 @@ func main() {
 					positions[i].y-positions[j].y,
 				}
 				node1 := Position{positions[i].x+distance.x, positions[i].y+distance.y}
+				// for part 2 whenever we have a couple of antennas their position is also an antinode
+				// so we add it to the list of nodes
+				nodesPt2[positions[i]] = true
+				nodesPt2[positions[j]] = true
 				if ! outsideMap(node1, mapSize) {
 					nodes[node1] = true
 					mapVis[node1.y][node1.x] = "#"
+					// For part 2 keep adding the distance to the node found until we are outside the map
+					resonantNode := node1
+					for ! outsideMap(resonantNode, mapSize) {
+						nodesPt2[resonantNode] = true
+						mapVis[resonantNode.y][resonantNode.x] = "#"
+						resonantNode = Position{resonantNode.x+distance.x, resonantNode.y+distance.y}
+					}
 				}
 				node2 := Position{positions[j].x-distance.x, positions[j].y-distance.y}
 				if ! outsideMap(node2, mapSize) {
 					nodes[node2] = true
+					nodesPt2[node2] = true
 					mapVis[node2.y][node2.x] = "#"
+					// For part 2 keep adding the distance to the node found until we are outside the map
+					resonantNode := node2
+					for ! outsideMap(resonantNode, mapSize) {
+						nodesPt2[resonantNode] = true
+						mapVis[resonantNode.y][resonantNode.x] = "#"
+						resonantNode = Position{resonantNode.x-distance.x, resonantNode.y-distance.y}
+					}
 				}
 			}
 		}
 	}
+	printMap(mapVis)
 	fmt.Printf("Part 1, found %d antinodes.\n", len(nodes))
+	fmt.Printf("Part 2, found %d resonant antinodes.\n", len(nodesPt2))
 }
