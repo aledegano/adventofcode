@@ -67,7 +67,7 @@ func main() {
 		pos := trailHead
 		for {
 			nextPos := nextStep(pos, topoMap)
-			if nextPos == Position{-1,-1} {
+			if nextPos.x == -1 || nextPos.y == -1 {
 				break
 			}
 			if topoMap[nextPos] == 9 {
