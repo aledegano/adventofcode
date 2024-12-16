@@ -8,6 +8,7 @@ import (
 	// "regexp"
 	"strconv"
 	"strings"
+	// "time"
 	// "unicode"
 )
 
@@ -18,6 +19,10 @@ type Position struct {
 	x,y int
 }
 
+type Trail struct {
+	start, end Position
+}
+
 var directions = map[int]Position{
 	0: Position{0,1},
 	1: Position{1,0},
@@ -25,16 +30,20 @@ var directions = map[int]Position{
 	3: Position{-1,0},
 }
 
-func nextStep(pos Position, topoMap map[Position]int) Position {
+func nextStep(pos Position, topoMap map[Position]int) []Position {
+	toVisit := []Position{}
 	for i:=0; i<4; i++ {
 		newPos := Position{pos.x + directions[i].x, pos.y + directions[i].y}
 		if height, ok := topoMap[newPos]; ok {
 			if height == topoMap[pos]+1 {
-				return newPos
+				toVisit = append(toVisit, newPos)
 			}
 		}
 	}
-	return Position{-1,-1}
+	if len(toVisit) == 0 {
+		toVisit = append(toVisit, Position{-1,-1})
+	}
+	return toVisit
 }
 
 func main() {
@@ -62,20 +71,39 @@ func main() {
 	}
 	fmt.Printf("TopoMap: %v\n", topoMap)
 	fmt.Printf("TrailHeads: %v\n", trailHeads)
-	trailScores := 0
+	uniqueTrailScores := map[Trail]bool{}
+	trailScores := map[Trail]int{}
+	posList := []Position{}
 	for _, trailHead := range trailHeads {
-		pos := trailHead
+		posList = []Position{}
+		posList = append(posList, trailHead)
 		for {
-			nextPos := nextStep(pos, topoMap)
-			if nextPos.x == -1 || nextPos.y == -1 {
-				break
+			// time.Sleep(1 * time.Second)
+			if len(posList) == 0 {
+				break // no more trails to follow for this trailhead
 			}
-			if topoMap[nextPos] == 9 {
-				trailScores++
-				break
+			posList = append(posList, nextStep(posList[0], topoMap)...)
+			posList = posList[1:] // remove the current position from the list
+			if posList[0].x == -1 || posList[0].y == -1 {
+				posList = posList[1:] // reached a dead end, continue with the next fork in the trail
+				continue
 			}
-			pos = nextPos
+			if topoMap[posList[0]] == 9 {
+				if _, ok := uniqueTrailScores[Trail{trailHead, posList[0]}]; !ok {
+					
+				uniqueTrailScores[Trail{trailHead, posList[0]}] = true
+				trailScores[Trail{trailHead, posList[0]}]++ // reached the end of a trail and scored a point
+				posList = posList[1:] // continue with the next fork in the trail
+				continue
+			}
 		}
 	}
-	fmt.Printf("TrailScores: %d\n", trailScores)
+	totalScore := 0
+	for _, score := range trailScores {
+		totalScore += score
+	}
+	fmt.Printf("TrailScores: %v\n", trailScores)
+	fmt.Printf("TrailScores: %d\n", totalScore)
+	fmt.Printf("UniqueTrailScores: %v\n", uniqueTrailScores)
+	fmt.Printf("UniqueTrailScores: %v\n", len(uniqueTrailScores))
 }
