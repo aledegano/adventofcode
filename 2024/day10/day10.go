@@ -16,7 +16,7 @@ var inputFile = flag.String("inputFile", "test_input.txt", "Relative file path t
 var debug = flag.Bool("debug", false, "Print debug info")
 
 type Position struct {
-	x,y int
+	x, y int
 }
 
 type Trail struct {
@@ -24,15 +24,15 @@ type Trail struct {
 }
 
 var directions = map[int]Position{
-	0: Position{0,1},
-	1: Position{1,0},
-	2: Position{0,-1},
-	3: Position{-1,0},
+	0: Position{0, 1},
+	1: Position{1, 0},
+	2: Position{0, -1},
+	3: Position{-1, 0},
 }
 
 func nextStep(pos Position, topoMap map[Position]int) []Position {
 	toVisit := []Position{}
-	for i:=0; i<4; i++ {
+	for i := 0; i < 4; i++ {
 		newPos := Position{pos.x + directions[i].x, pos.y + directions[i].y}
 		if height, ok := topoMap[newPos]; ok {
 			if height == topoMap[pos]+1 {
@@ -41,7 +41,7 @@ func nextStep(pos Position, topoMap map[Position]int) []Position {
 		}
 	}
 	if len(toVisit) == 0 {
-		toVisit = append(toVisit, Position{-1,-1})
+		toVisit = append(toVisit, Position{-1, -1})
 	}
 	return toVisit
 }
@@ -56,23 +56,24 @@ func main() {
 	contents := string(bytes)
 	lines := strings.Split(contents, "\n")
 	topoMap := map[Position]int{} // maps a position to the height
-	trailHeads := []Position{} // list of positions that are the start of a trail
+	trailHeads := []Position{}    // list of positions that are the start of a trail
 	for y, line := range lines {
 		if len(line) == 0 {
 			continue
 		}
 		for x, c := range line {
-			height, _ := strconv.Atoi(string(c))
-			topoMap[Position{x,y}] = height
-			if height == 0 {
-				trailHeads = append(trailHeads, Position{x,y})
+			if c != '.' {
+				height, _ := strconv.Atoi(string(c))
+				topoMap[Position{x, y}] = height
+				if height == 0 {
+					trailHeads = append(trailHeads, Position{x, y})
+				}
 			}
 		}
 	}
-	fmt.Printf("TopoMap: %v\n", topoMap)
-	fmt.Printf("TrailHeads: %v\n", trailHeads)
 	uniqueTrailScores := map[Trail]bool{}
 	trailScores := map[Trail]int{}
+	totalScore := 0
 	posList := []Position{}
 	for _, trailHead := range trailHeads {
 		posList = []Position{}
@@ -82,28 +83,25 @@ func main() {
 			if len(posList) == 0 {
 				break // no more trails to follow for this trailhead
 			}
+			if topoMap[posList[0]] == 9 {
+				trailScores[Trail{trailHead, posList[0]}]++ // reached the end of a trail and scored a point
+				if _, ok := uniqueTrailScores[Trail{trailHead, posList[0]}]; !ok {
+					uniqueTrailScores[Trail{trailHead, posList[0]}] = true
+					posList = posList[1:]                       // continue with the next fork in the trail
+					continue
+				}
+			}
 			posList = append(posList, nextStep(posList[0], topoMap)...)
 			posList = posList[1:] // remove the current position from the list
 			if posList[0].x == -1 || posList[0].y == -1 {
 				posList = posList[1:] // reached a dead end, continue with the next fork in the trail
 				continue
 			}
-			if topoMap[posList[0]] == 9 {
-				if _, ok := uniqueTrailScores[Trail{trailHead, posList[0]}]; !ok {
-					
-				uniqueTrailScores[Trail{trailHead, posList[0]}] = true
-				trailScores[Trail{trailHead, posList[0]}]++ // reached the end of a trail and scored a point
-				posList = posList[1:] // continue with the next fork in the trail
-				continue
-			}
 		}
 	}
-	totalScore := 0
+	fmt.Printf("Part1: UniqueTrailScores: %v\n", len(uniqueTrailScores))
 	for _, score := range trailScores {
 		totalScore += score
 	}
-	fmt.Printf("TrailScores: %v\n", trailScores)
-	fmt.Printf("TrailScores: %d\n", totalScore)
-	fmt.Printf("UniqueTrailScores: %v\n", uniqueTrailScores)
-	fmt.Printf("UniqueTrailScores: %v\n", len(uniqueTrailScores))
+	fmt.Printf("Part2: Total trailScores: %d\n", totalScore)
 }
