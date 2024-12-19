@@ -1,3 +1,5 @@
+github.com/fzipp/astar v0.3.0 h1:ONok5YsDmFAVpBvKBP30wU3YDNVU101VRWBTRCUsGqA=
+github.com/fzipp/astar v0.3.0/go.mod h1:KWXlNb4EkWXPckLv812VKCBie5lg3I38jj05whtQozM=
 github.com/mowshon/iterium v1.0.0 h1:04pku9dTNnfVvshf+DQIV3E92T/EwmnXKtXMkmZ3+5Q=
 github.com/mowshon/iterium v1.0.0/go.mod h1:Bnchn9HAYNQ/7MLUwKDyvjduSuVJQQwrNxmXJDqpXg4=
 golang.org/x/exp v0.0.0-20230307190834-24139beb5833 h1:SChBja7BCQewoTAU7IgvucQKMIXrEpFxNMs0spT3/5s=
