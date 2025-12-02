@@ -24,23 +24,23 @@ func main() {
 	contents := string(bytes)
 	lines := strings.Split(contents, "\n")
 	position := 50
+	password := 0
 	for _, line := range lines {
 		if len(line) < 1 {
 			break
 		}
 		diff, _ := strconv.Atoi(line[1:])
-		fmt.Println(diff)
 		if string(line[0]) == "L" {
 			position = position - diff
 		} else {
 			position = position + diff
 		}
-		if position < 0 {
-			position = 100 - position
+		if position < 0 || position > 99 {
+			position = position % 100
 		}
-		if position > 99 {
-			position = position - 100
+		if position == 0 {
+			password = password + 1
 		}
-		fmt.Println(position)
 	}
+	fmt.Println(password)
 }
