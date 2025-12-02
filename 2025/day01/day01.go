@@ -32,31 +32,33 @@ func main() {
 			break
 		}
 		diff, _ := strconv.Atoi(line[1:])
-		if *debug {
-			fmt.Println("Current position:", position, "Instruction:", line, "Diff:", diff)
-		}
 		if string(line[0]) == "L" {
 			newPosition = position - diff
 		} else {
 			newPosition = position + diff
 		}
+		if *debug {
+			fmt.Println("Old position:", position, "New position:", newPosition)
+		}
 		if (newPosition < 0 && position > 0) || (newPosition > 0 && position < 0) {
 			across = across + 1
 			if *debug {
-				fmt.Println("New position:", newPosition, "Old position:", position)
-				fmt.Println("Crossed zero, across is now", across)
+				fmt.Println("* Crossed zero, across is now", across)
 			}
 		}
 		if int(math.Abs(float64(newPosition))) > 100 {
 			across = across + int(math.Floor(math.Abs(float64(newPosition))/100))
 			if *debug {
-				fmt.Println("Multiple turns, across is now", across)
+				fmt.Println("* Multiple turns, across is now", across)
 			}
 		}
 		position = newPosition
 		position = position % 100
 		if position == 0 {
 			password = password + 1
+			if *debug {
+				fmt.Println("On zero", password)
+			}
 		}
 	}
 	fmt.Println("Part 1 solution:", password)
