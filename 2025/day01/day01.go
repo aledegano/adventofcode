@@ -35,9 +35,7 @@ func main() {
 		} else {
 			position = position + diff
 		}
-		if position < 0 || position > 99 {
-			position = position % 100
-		}
+		position = position % 100
 		if position == 0 {
 			password = password + 1
 		}
