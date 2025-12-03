@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+
 	// "regexp"
 	"strconv"
 	"strings"
@@ -40,17 +41,18 @@ func main() {
 		if *debug {
 			fmt.Println("Old position:", position, "New position:", newPosition)
 		}
+		if (newPosition < 0 && position > 0) || (newPosition > 0 && position < 0) {
+			across = across + 1
+			if *debug {
+				fmt.Println("* Crossed zero, across is now", across)
+			}
+		}
 		if int(math.Abs(float64(newPosition))) > 100 {
 			across = across + int(math.Floor(math.Abs(float64(newPosition))/100))
 			if *debug {
 				fmt.Println("* Multiple turns, across is now", across)
 			}
-			if (newPosition%100 < 0 && position > 0) || (newPosition%100 > 0 && position < 0) {
-				across = across + 1
-				if *debug {
-					fmt.Println("* Crossed zero, across is now", across)
-				}
-			}
+		}
 		position = newPosition
 		position = position % 100
 		if position == 0 {
